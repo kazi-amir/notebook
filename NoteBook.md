@@ -6,13 +6,13 @@
 
 #### Constraints: 
 
-$1\leq\ N\ \leq\ 2 \times 10^5$<br>
-$1\leq\ M\ \leq\ 2 \ \times 10^5$<br>
-$1\leq\ Q\ \leq\ 2 \ \times 10^5$<br>
-$-10^9\ \leq\ X_i, Y_i\ \leq\ 10^9$<br>
-$-10^9\ \leq\ p_i\ \leq\ 10^9$<br>
-$0\ \leq\ A_i\ \leq\ M$<br>
-$0\ \leq\ B_i\ \leq\ N$<br>
+$1\leq\ N\ \leq\ 2 \times 10^5$ 
+$1\leq\ M\ \leq\ 2 \ \times 10^5$ 
+$1\leq\ Q\ \leq\ 2 \ \times 10^5$ 
+$-10^9\ \leq\ X_i, Y_i\ \leq\ 10^9$ 
+$-10^9\ \leq\ p_i\ \leq\ 10^9$ 
+$0\ \leq\ A_i\ \leq\ M$ 
+$0\ \leq\ B_i\ \leq\ N$ 
 
 #### Before any rotation, 0&deg; rotation:
 \[
@@ -35,7 +35,7 @@ $0\ \leq\ B_i\ \leq\ N$<br>
 \]
 
 #### After operation 1, 90&deg; clockwise rotation:
-$$
+
 \[
 \begin{pmatrix}
   0       & 1   & 0  \\
@@ -54,10 +54,10 @@ $$
   1  \\
 \end{pmatrix}
 \]
-$$
+
 
 #### After operation 2, 90&deg; counter clockwise rotation:
-$$
+
 \[
 \begin{pmatrix}
   0       & -1  & 0  \\
@@ -76,10 +76,10 @@ $$
   1  \\
 \end{pmatrix}
 \]
-$$
+
 
 #### After operation 3, Mirror reflection at point **p** on **x** axis:
-$$
+
 \[
 \begin{pmatrix}
   -1      & 0   & 2p  \\
@@ -98,10 +98,10 @@ $$
   1  \\
 \end{pmatrix}
 \]
-$$
+
 
 #### After operation 4, Mirror reflection at point __p__ on **y** axis:
-$$
+
 \[
 \begin{pmatrix}
   1       & 0   & 0  \\
@@ -120,4 +120,4 @@ $$
   1  \\
 \end{pmatrix}
 \]
-$$
+
