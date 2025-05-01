@@ -15,6 +15,7 @@ $0\ \leq\ A_i\ \leq\ M$<br>
 $0\ \leq\ B_i\ \leq\ N$<br>
 
 #### Before any rotation, 0&deg; rotation:
+$$
 \[
 \begin{pmatrix}
   1       & 0   & 0  \\
@@ -33,8 +34,10 @@ $0\ \leq\ B_i\ \leq\ N$<br>
   1  \\
 \end{pmatrix}
 \]
+$$
 
 #### After operation 1, 90&deg; clockwise rotation:
+$$
 \[
 \begin{pmatrix}
   0       & 1   & 0  \\
@@ -53,8 +56,10 @@ $0\ \leq\ B_i\ \leq\ N$<br>
   1  \\
 \end{pmatrix}
 \]
+$$
 
 #### After operation 2, 90&deg; counter clockwise rotation:
+$$
 \[
 \begin{pmatrix}
   0       & -1  & 0  \\
@@ -73,8 +78,10 @@ $0\ \leq\ B_i\ \leq\ N$<br>
   1  \\
 \end{pmatrix}
 \]
+$$
 
 #### After operation 3, Mirror reflection at point **p** on **x** axis:
+$$
 \[
 \begin{pmatrix}
   -1      & 0   & 2p  \\
@@ -93,8 +100,10 @@ $0\ \leq\ B_i\ \leq\ N$<br>
   1  \\
 \end{pmatrix}
 \]
+$$
 
 #### After operation 4, Mirror reflection at point __p__ on **y** axis:
+$$
 \[
 \begin{pmatrix}
   1       & 0   & 0  \\
@@ -113,4 +122,4 @@ $0\ \leq\ B_i\ \leq\ N$<br>
   1  \\
 \end{pmatrix}
 \]
-
+$$
