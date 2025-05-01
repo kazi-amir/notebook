@@ -6,13 +6,13 @@
 
 #### Constraints: 
 
-$1\leq\ N\ \leq\ 2 \times 10^5$
-$1\leq\ M\ \leq\ 2 \ \times 10^5$
-$1\leq\ Q\ \leq\ 2 \ \times 10^5$
-$-10^9\ \leq\ X_i, Y_i\ \leq\ 10^9$
-$-10^9\ \leq\ p_i\ \leq\ 10^9$
-$0\ \leq\ A_i\ \leq\ M$
-$0\ \leq\ B_i\ \leq\ N$
+$1\leq\ N\ \leq\ 2 \times 10^5$<br>
+$1\leq\ M\ \leq\ 2 \ \times 10^5$<br>
+$1\leq\ Q\ \leq\ 2 \ \times 10^5$<br>
+$-10^9\ \leq\ X_i, Y_i\ \leq\ 10^9$<br>
+$-10^9\ \leq\ p_i\ \leq\ 10^9$<br>
+$0\ \leq\ A_i\ \leq\ M$<br>
+$0\ \leq\ B_i\ \leq\ N$<br>
 
 #### Before any rotation, 0&deg; rotation:
 \[
