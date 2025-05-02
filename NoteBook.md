@@ -15,7 +15,7 @@ $0\ \leq\ A_i\ \leq\ M$
 $0\ \leq\ B_i\ \leq\ N$ 
 
 #### Before any rotation, 0&deg; rotation:
-\[
+
 \begin{pmatrix}
   1       & 0   & 0  \\
   0       & 1   & 0  \\
@@ -32,7 +32,7 @@ $0\ \leq\ B_i\ \leq\ N$
   y  \\
   1  \\
 \end{pmatrix}
-\]
+
 
 #### After operation 1, 90&deg; clockwise rotation:
 
