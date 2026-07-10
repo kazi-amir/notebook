@@ -178,3 +178,38 @@ Confirm that none of them remains in `inputs`. Remove any temporary resized file
 Update `turtle_bay_fieldwork_report.md`, `turtlr_bay_photo_log.csv`, and `turtle_bay_follow_up.md` so they agree on the schedule, crew, CRM history, evidence classes, excluded files, unresolved N-3 repair, and recommended clamp replacement and retest. Treat the circled `3879` only as an unidentified reference number unless a universe record establishes its meaning.
 
 Finally, verify the CSV still contains exactly one row for each of the 13 original packet files and that the final response accurately summarizes all corrections.
+
+
+## 2nd follow up prompt.
+One more short follow-up prompt is advisable. The model fixed the major failures, used the universe records, moved the files correctly, removed temporary images, and kept all three artifacts consistent. 
+
+The remaining issue is that four evidence classes do not match the intended final classification:
+
+* `IMG_6140.JPG` should be `context_only`, not `ambiguous`.
+* `IMG_6142.JPG` should be `context_only`, not `ambiguous`.
+* `IMG_6156.PNG` should be `ambiguous`, not `context_only`.
+* `IMG_6162.JPG` should be `ambiguous`, not `context_only`.
+
+The distinction is:
+
+* The pool and oceanfront-lawn images provide general resort context, although they do not identify Turtle Bay.
+* The two sprinkler images could be related to the irrigation work, but there is insufficient evidence connecting them to the visit or N-3, so they are ambiguous.
+
+Use this final follow-up prompt:
+
+Please make one final evidence-classification correction across the current artifacts:
+
+* Change `IMG_6140.JPG` to `context_only`.
+* Change `IMG_6142.JPG` to `context_only`.
+* Change `IMG_6156.PNG` to `ambiguous`.
+* Change `IMG_6162.JPG` to `ambiguous`.
+
+The two resort-ground images provide general property context but do not prove the exact site. The two sprinkler images show plausible irrigation equipment or operation, but there is not enough evidence to connect them to the March 14 visit, the north lawn, or valve N-3.
+
+Update `turtle_bay_fieldwork_report.md` and `turtlr_bay_photo_log.csv` so these classifications and their explanations agree. Keep `IMG_6159.JPG` as `context_only`, and do not change the excluded-folder contents.
+
+Also revise the irrigation follow-up language so it recommends replacing the clamp near N-3 without claiming that the photographed compression coupling is definitely the actual N-3 component. Keep the photograph described only as contextual evidence.
+
+Verify afterward that the CSV still has exactly 13 rows, `inputs` still has 8 original files, and `excluded_photos` still has the same 5 files.
+
+After that correction, no further prompt should be necessary unless the resulting trajectory introduces a new inconsistency.
