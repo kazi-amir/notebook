@@ -148,3 +148,33 @@ Use heavier weights for the difficult core outcomes:
 * Cross-artifact consistency: **5**
 
 This makes genuine reasoning failures carry enough weight. It does not guarantee a 50% failure, but it creates a much stronger chance without making the task unfair or impossible. The project requires the initial trajectory to fail at least half of the final rubric weight through meaningful task failures, not artificial formatting traps. 
+
+
+
+
+
+
+## Use this as the next follow-up prompt:
+
+Please revise the current workspace outputs to make the fieldwork record fully defensible.
+
+First, search the relevant email, calendar, CRM, and messaging records for Turtle Bay and use those records in the report. Correct the schedule and crew timeline: Vernon requested Lucia’s crew for March 14 from 7:00 AM–2:30 PM; Lucia later declined because of a prior commitment and suggested Paloma’s crew; Paloma + 2 ultimately attended, arriving at 7:05 AM and leaving at 2:20 PM. Do not treat the crossed-out 8:00 AM entry as the official schedule.
+
+Replace the speculative historical-context section with the actual CRM history: spent ginger at the north entrance was to be replaced with yellow heliconia; a later walkthrough noted the yellow heliconia blooming; and a subsequent record said it was beginning to overtake the walkway and needed thinning. Keep this history separate from March 14 observations.
+
+Correct the media handling:
+
+* classify `IMG_6140_edit.JPG` as a visual duplicate of `IMG_6140.JPG` because it is an edited/cropped version that adds no new evidence;
+* keep `IMG_6159.JPG` as `context_only`, not direct visit evidence;
+* classify `IMG_6142_copy.JPG` as an exact duplicate;
+* keep `IMG_5902.JPG`, `IMG_6151.JPG`, and `IMG_6170.JPG` as unrelated.
+
+Move, rather than copy, these five files into `excluded_photos`:
+
+`IMG_6140_edit.JPG`, `IMG_6142_copy.JPG`, `IMG_5902.JPG`, `IMG_6151.JPG`, and `IMG_6170.JPG`.
+
+Confirm that none of them remains in `inputs`. Remove any temporary resized files such as `IMG_6148_sm.jpg` or `IMG_6156_sm.jpg`; they are processing artifacts, not original packet files.
+
+Update `turtle_bay_fieldwork_report.md`, `turtlr_bay_photo_log.csv`, and `turtle_bay_follow_up.md` so they agree on the schedule, crew, CRM history, evidence classes, excluded files, unresolved N-3 repair, and recommended clamp replacement and retest. Treat the circled `3879` only as an unidentified reference number unless a universe record establishes its meaning.
+
+Finally, verify the CSV still contains exactly one row for each of the 13 original packet files and that the final response accurately summarizes all corrections.
