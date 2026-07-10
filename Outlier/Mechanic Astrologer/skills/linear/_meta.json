@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "linear",
+  "displayName": "Linear",
+  "description": "Manage users, teams, projects, issues, and comments via the Linear project tracker.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "weather",
+  "displayName": "Weather",
+  "description": "Check weather forecasts, history, alerts, air quality, astronomy, and sports events.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

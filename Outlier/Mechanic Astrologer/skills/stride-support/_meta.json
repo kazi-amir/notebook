@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "stride-support",
+  "displayName": "Stride Support",
+  "description": "Customer support workflows for Stride Shoes — cross-system lookup, complaint handling, refund verification, and order tracking.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "strava",
+  "displayName": "Strava",
+  "description": "Load and analyze Strava activities, stats, and workouts including runs, rides, swims, and more.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

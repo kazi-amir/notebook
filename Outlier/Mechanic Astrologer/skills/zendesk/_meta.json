@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "zendesk",
+  "displayName": "Zendesk",
+  "description": "Manage support tickets, users, organizations, and groups for a Zendesk-style help desk system.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

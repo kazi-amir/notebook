@@ -1,0 +1,96 @@
+Go through this prompt and Response:
+PROMPT BEGINS
+
+I am doing LeetCode practice. The language I am using for code implementation is JavaScript. Can you please generate the brute force code for the Group Anagram problem? Please explain the algorithm as well.
+
+
+RESPONSE:
+
+Absolutely—this is LeetCode 49 “Group Anagrams”.
+
+Below is the most intuitive (often called “brute-force”) solution: **turn each word into a canonical key by sorting its letters, then group the words that share the same key**. It’s easy to reason about, easy to code, and passes the constraints just fine.
+
+### Algorithm (step-by-step)
+
+1. **Create a hash map** Map or plain object) where the key is the “signature” of a word and the value is an array of all words that have that signature.
+
+2. **For each string s in the input list strs:**
+
+* Split s into characters, sort them alphabetically, and join them back → key.
+
+* If two strings are anagrams, their sorted forms are identical, so they will produce the same key.
+
+* Put s into the bucket map[key] (create the bucket if it doesn’t exist).
+
+3. **After processing all strings**, return all the buckets Array.from(map.values())).
+
+> If you wanted to be even more naive you could compare every pair of strings O(N²·K)) and use a 26-letter count to test “are they anagrams?”. That works, but it’s much slower. The sorting-by-key method above is the usual “first-thought” solution and is fast enough for the limits.
+
+### Complexity
+
+* Let N = strs.length and K = max length of a word.
+
+* Sorting each word costs O(K log K).
+
+* Doing it for N words → **Time:** O(N · K log K).
+
+* Storing all strings → **Space:** O(N · K).
+
+### JavaScript implementation
+```
+/**
+ * @param {string[]} strs
+ * @return {string[][]}
+ */
+function groupAnagrams(strs) {
+  const map = new Map(); // key -> array of anagrams
+
+  for (const s of strs) {
+    // 1. build a canonical key by sorting the characters
+    const key = s.split('').sort().join(''); // e.g. "eat" -> "aet"
+
+    // 2. push the original word into the right bucket
+    if (!map.has(key)) {
+      map.set(key, []);
+    }
+    map.get(key).push(s);
+  }
+
+  // 3. return the buckets as an array of arrays
+  return Array.from(map.values());
+}
+
+/* Example:
+   const input = ["eat","tea","tan","ate","nat","bat"];
+   console.log(groupAnagrams(input));
+   // Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+*/
+```
+
+#### Quick note on the even more naive O(N²) version
+
+Conceptually you could do:
+```
+function areAnagrams(a, b) {
+  if (a.length !== b.length) return false;
+  const cnt = Array(26).fill(0);
+  for (let i = 0; i < a.length; i++) {
+    cnt[a.charCodeAt(i) - 97]++;
+    cnt[b.charCodeAt(i) - 97]--;
+  }
+  return cnt.every(c => c === 0);
+}
+```
+
+Then loop i from 0..N-1, and for each unused j>i check areAnagrams(strs[i], strs[j]) and build groups. That’s O(N²·K) and will time-out on larger inputs, which is why the sorting-by-key map above is preferred as the first “brute-force-ish” solution you’d write.
+
+Happy coding, and let me know if you’d like to see the counting-array O(N·K)) version as the next optimization!
+
+
+
+
+
+
+
+What should be the Overall Score for this response?
+Justify your answer

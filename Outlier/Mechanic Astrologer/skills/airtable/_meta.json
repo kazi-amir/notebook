@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "airtable",
+  "displayName": "Airtable",
+  "description": "Browse and manage Airtable bases, tables, fields, and records. List, create, update, delete, and search records across bases.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

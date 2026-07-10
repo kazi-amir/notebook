@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "slack",
+  "displayName": "Slack",
+  "description": "Browse Slack channels, read message history, search across conversations, and post messages or replies.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

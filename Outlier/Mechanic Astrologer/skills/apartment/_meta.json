@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "apartment",
+  "displayName": "Apartment",
+  "description": "Search apartments, view details, and manage saved listings.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

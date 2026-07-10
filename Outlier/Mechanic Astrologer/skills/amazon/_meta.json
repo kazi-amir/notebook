@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "amazon",
+  "displayName": "Amazon",
+  "description": "Search products, view order history, analyze spending patterns, and explore the Amazon catalog.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

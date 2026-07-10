@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "buildium",
+  "displayName": "Buildium",
+  "description": "Manage rental properties, units, tenants, leases, work orders, vendors, and applicants for a property management portfolio.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

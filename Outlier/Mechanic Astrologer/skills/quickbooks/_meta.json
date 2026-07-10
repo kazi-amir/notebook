@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "quickbooks",
+  "displayName": "QuickBooks",
+  "description": "Manage customers, vendors, invoices, bills, and accounts via the QuickBooks accounting platform.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

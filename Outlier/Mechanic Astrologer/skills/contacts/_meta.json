@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "contacts",
+  "displayName": "Contacts",
+  "description": "Browse, search, add, edit, and delete contacts. Includes name, email, phone, address, job, and demographic info.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

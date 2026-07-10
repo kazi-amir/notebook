@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "crm",
+  "displayName": "CRM",
+  "description": "Manage contacts, companies, deals, leads, and engagements via the CRM platform.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

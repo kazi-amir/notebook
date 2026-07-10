@@ -1,0 +1,787 @@
+diff --git a/samcli/lib/hook/__init__.py b/samcli/lib/hook/__init__.py
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/samcli/lib/hook/exceptions.py b/samcli/lib/hook/exceptions.py
+new file mode 100644
+index 0000000000..e45b13e925
+--- /dev/null
++++ b/samcli/lib/hook/exceptions.py
+@@ -0,0 +1,18 @@
++"""Hooks Exceptions"""
++from samcli.commands.exceptions import UserException
++
++
++class InvalidHookWrapperException(UserException):
++    pass
++
++
++class InvalidHookPackageException(UserException):
++    pass
++
++
++class HookPackageExecuteFunctionalityException(UserException):
++    pass
++
++
++class InvalidHookPackageConfigException(UserException):
++    pass
+diff --git a/samcli/lib/hook/hook_config.py b/samcli/lib/hook/hook_config.py
+new file mode 100644
+index 0000000000..e6da78dba4
+--- /dev/null
++++ b/samcli/lib/hook/hook_config.py
+@@ -0,0 +1,89 @@
++"""Hook Package Config"""
++import json
++from pathlib import Path
++from typing import Dict, NamedTuple, cast
++
++import jsonschema  # type: ignore
++from .exceptions import InvalidHookPackageConfigException
++
++
++class HookFunctionality(NamedTuple):
++    """
++    A class to represent a hook functionality (e.g. prepare)
++    """
++
++    entry_method: Dict[str, str]
++
++    @property
++    def module(self) -> str:
++        return self.entry_method["module"]
++
++    @property
++    def method(self) -> str:
++        return self.entry_method["method"]
++
++
++class HookPackageConfig:
++    """
++    A class to represent a hook package. Upon instantiation, it also validate the config against a json schema.
++    """
++
++    _package_dir: Path
++    _config: Dict
++
++    CONFIG_FILENAME = "Config.json"
++    JSON_SCHEMA_PATH = Path(__file__).parent / "hook_config_schema.json"
++
++    def __init__(self, package_dir: Path):
++        """
++        Parameters
++        ----------
++        package_dir: Path
++            The path of the hook package directory
++        """
++        self._package_dir = package_dir
++        config_loc = package_dir / self.CONFIG_FILENAME
++        if not config_loc.is_file():
++            raise InvalidHookPackageConfigException(f"{config_loc} is not a file or does not exist")
++
++        with config_loc.open("r", encoding="utf-8") as f:
++            config_dict = json.load(f)
++
++        try:
++            jsonschema.validate(config_dict, self.jsonschema)
++        except jsonschema.ValidationError as e:
++            raise InvalidHookPackageConfigException(f"Invalid Config.json - {e}") from e
++
++        for func, func_dict in config_dict["functionalities"].items():
++            config_dict["functionalities"][func] = HookFunctionality(func_dict["entry_method"])
++        self._config = config_dict
++
++    @property
++    def jsonschema(self) -> Dict:
++        with HookPackageConfig.JSON_SCHEMA_PATH.open("r", encoding="utf-8") as f:
++            jsonschema_dict = json.load(f)
++        return cast(Dict, jsonschema_dict)
++
++    @property
++    def package_id(self) -> str:
++        return cast(str, self._config["hook_package_id"])
++
++    @property
++    def use_case(self) -> str:
++        return cast(str, self._config["hook_use_case"])
++
++    @property
++    def version(self) -> str:
++        return cast(str, self._config["version"])
++
++    @property
++    def specification(self) -> str:
++        return cast(str, self._config["hook_specification"])
++
++    @property
++    def description(self) -> str:
++        return cast(str, self._config["description"])
++
++    @property
++    def functionalities(self) -> Dict[str, HookFunctionality]:
++        return cast(Dict[str, HookFunctionality], self._config["functionalities"])
+diff --git a/samcli/lib/hook/hook_config_schema.json b/samcli/lib/hook/hook_config_schema.json
+new file mode 100644
+index 0000000000..dbcbe32999
+--- /dev/null
++++ b/samcli/lib/hook/hook_config_schema.json
+@@ -0,0 +1,81 @@
++{
++    "description": "JSON Schema for a Hook Config.json",
++    "type": "object",
++    "required": ["hook_package_id", "hook_use_case", "hook_specification", "version", "functionalities"],
++    "$defs": {
++        "functionality": {
++            "type": "object",
++            "required": ["entry_method"],
++            "properties": {
++                "entry_method": { "$ref": "#/$defs/entry_method" },
++                "parameters": {
++                    "type": "array",
++                    "items": { "$ref": "#/$defs/parameter" }
++                }
++            }
++        },
++        "entry_method": {
++            "type": "object",
++            "properties": {
++                "module": {
++                    "type": "string"
++                },
++                "method": {
++                    "type": "string"
++                }
++            }
++        },
++        "parameter": {
++            "type": "object",
++            "required": ["long_name", "short_name", "description", "mandatory", "type"],
++            "properties": {
++                "long_name": {
++                    "type": "string"
++                },
++                "short_name": {
++                    "type": "string"
++                },
++                "description": {
++                    "type": "string"
++                },
++                "mandatory": {
++                    "type": "boolean"
++                },
++                "type": {
++                    "type": "string",
++                    "enum": ["array", "text"]
++                }
++            }
++        }
++    },
++    "properties": {
++        "hook_package_id": {
++            "type": "string"
++        },
++        "hook_use_case": {
++            "type": "string",
++            "enum": ["IaC", "iac"]
++        },
++        "hook_specification": {
++            "type": "string",
++            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
++        },
++        "description": {
++            "type": "string"
++        },
++        "iac_framework": {
++            "type": "string"
++        },
++        "version": {
++            "type": "string",
++            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
++        },
++        "functionalities": {
++            "type": "object",
++            "required": ["prepare"],
++            "properties": {
++                "prepare": { "$ref": "#/$defs/functionality" }
++            }
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/samcli/lib/hook/hook_wrapper.py b/samcli/lib/hook/hook_wrapper.py
+new file mode 100644
+index 0000000000..7680bee9c4
+--- /dev/null
++++ b/samcli/lib/hook/hook_wrapper.py
+@@ -0,0 +1,176 @@
++"""
++Hooks Wrapper Class
++"""
++import logging
++import importlib
++from pathlib import Path
++from typing import Optional, Dict, cast
++
++
++from .hook_config import HookPackageConfig
++from .exceptions import (
++    InvalidHookPackageConfigException,
++    InvalidHookWrapperException,
++    HookPackageExecuteFunctionalityException,
++)
++
++
++LOG = logging.getLogger(__name__)
++
++
++class IacHookWrapper:
++    """IacHookWrapper
++
++    An IacHookWrapper instance, upon instantiation, looks up the hook package with the specified hook package ID.
++    It provides the "prepare" method, which generates an IaC metadata and output the location of the metadata file.
++
++    Example:
++    ```
++    hook = IacHookWrapper("terraform")
++    metadata_loc = hook.prepare("path/to/iac_project", "path/to/output", True, "path/to/logs")
++    ```
++    """
++
++    _config: Optional[HookPackageConfig]
++
++    _INTERNAL_PACKAGES_ROOT = Path(__file__).parent / ".." / ".." / "hook_packages"
++
++    def __init__(self, hook_package_id: str):
++        """
++        Parameters
++        ----------
++        hook_package_id: str
++            Hook package ID
++        """
++        self._config = None
++        self._load_hook_package(hook_package_id)
++
++    def prepare(
++        self,
++        output_dir_path: str,
++        iac_project_path: Optional[str] = None,
++        debug: bool = False,
++        logs_path: Optional[str] = None,
++        aws_profile: Optional[str] = None,
++        aws_region: Optional[str] = None,
++    ) -> str:
++        """
++        Run the prepare hook to generate the IaC Metadata file.
++
++        Parameters
++        ----------
++        output_dir_path: str
++            the path where the hook can create the generated Metadata files. Required
++        iac_project_path: str
++            the path where the hook can find the TF application. Default value in current work directory.
++        debug: bool
++            True/False flag to tell the hooks if should print debugging logs or not. Default is False.
++        logs_path: str
++            File path where the hooks will write its logs. Default is None (no need to write logs)
++        aws_profile: str
++            AWS profile to use. Default is None (use default profile)
++        aws_region: str
++            AWS region to use. Default is None (use default region)
++
++        Returns
++        -------
++        str
++            Path to the generated IaC Metadata file
++        """
++        params = {
++            "IACProjectPath": iac_project_path if iac_project_path else str(Path.cwd()),
++            "OutputDirPath": output_dir_path,
++            "Debug": debug,
++        }
++        if logs_path:
++            params["LogsPath"] = logs_path
++        if aws_profile:
++            params["Profile"] = aws_profile
++        if aws_region:
++            params["Region"] = aws_region
++
++        output = self._execute("prepare", params)
++        metadata_file_loc = output.get("IACApplications", {}).get("MainApplication", {}).get("Metadata")
++        if not metadata_file_loc:
++            raise InvalidHookWrapperException("Metadata file path not found in the prepare hook output")
++        return cast(str, metadata_file_loc)
++
++    def _load_hook_package(self, hook_package_id: str) -> None:
++        """Find and load hook package config with given hook package ID
++
++        Parameters
++        ----------
++        hook_package_id: str
++            Hook package ID
++        """
++        # locate hook package from internal first
++        for child in self._INTERNAL_PACKAGES_ROOT.iterdir():
++            try:
++                hook_package_config = HookPackageConfig(child)
++                if hook_package_config.package_id == hook_package_id:
++                    self._config = hook_package_config
++                    return
++            except InvalidHookPackageConfigException:
++                continue
++
++        raise InvalidHookWrapperException(f'Cannot locate hook package with hook_package_id "{hook_package_id}"')
++
++    def _execute(self, functionality_key: str, params: Optional[Dict] = None) -> Dict:
++        """
++        Execute a functionality with given key
++
++        Parameters
++        ----------
++        functionality_key: str
++            The key of the functionality
++        params: Dict
++            A dict of parameters to pass into the execution
++
++        Returns
++        -------
++        Dict
++            the output from the execution
++        """
++        if not self._config:
++            raise InvalidHookWrapperException("Config is missing. You must instantiate a hook with a valid config")
++
++        if functionality_key not in self._config.functionalities:  # pylint: disable=unsupported-membership-test
++            raise HookPackageExecuteFunctionalityException(
++                f'Functionality "{functionality_key}" is not defined in the hook package'
++            )
++
++        functionality = self._config.functionalities[functionality_key]
++        if functionality.entry_method:
++            return _execute_as_module(functionality.module, functionality.method, params)
++
++        raise InvalidHookWrapperException(f'Functionality "{functionality_key}" is missing an "entry_method"')
++
++
++def _execute_as_module(module: str, method: str, params: Optional[Dict] = None) -> Dict:
++    """
++    Execute a module/method with given module and given method
++
++    Parameters
++    ----------
++    module: str
++        the module where the method lives in
++    method: str
++        the name of the method to execute
++    params: Dict
++        A dict of parameters to pass into the execution
++
++    Returns
++    -------
++    Dict
++        the output from the execution
++    """
++    try:
++        mod = importlib.import_module(module)
++    except ImportError as e:
++        raise InvalidHookWrapperException(f'Import error - HookFunctionality module "{module}"') from e
++
++    if not hasattr(mod, method):
++        raise InvalidHookWrapperException(f'HookFunctionality module "{module}" has no method "{method}"')
++
++    result = getattr(mod, method)(params)
++    return cast(Dict, result)
+diff --git a/tests/unit/lib/hook/__init__.py b/tests/unit/lib/hook/__init__.py
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/tests/unit/lib/hook/test_hook_config.py b/tests/unit/lib/hook/test_hook_config.py
+new file mode 100644
+index 0000000000..42c5f518da
+--- /dev/null
++++ b/tests/unit/lib/hook/test_hook_config.py
+@@ -0,0 +1,105 @@
++"""Test Hook Package Config"""
++import json
++from copy import deepcopy
++from unittest import TestCase
++from unittest.mock import patch, MagicMock, mock_open
++
++from samcli.lib.hook.hook_config import HookFunctionality, HookPackageConfig
++from samcli.lib.hook.exceptions import InvalidHookPackageConfigException
++
++TEST_HOOK_PACKAGE_CONFIG = {
++    "hook_package_id": "my_test_hook_package_id",
++    "hook_use_case": "IaC",
++    "description": "testing",
++    "version": "1.0.0",
++    "hook_specification": "1.0.0",
++    "functionalities": {
++        "prepare": {
++            "entry_method": {
++                "module": "x.y.z",
++                "method": "my_method",
++            },
++        }
++    },
++}
++
++
++class TestHookFunctionality(TestCase):
++    def setUp(self) -> None:
++        self._config = deepcopy(TEST_HOOK_PACKAGE_CONFIG)
++
++    def test_create_functionality(self):
++        prepare_dict = self._config["functionalities"]["prepare"]
++        functionality = HookFunctionality(prepare_dict["entry_method"])
++        self.assertEqual(functionality.module, "x.y.z")
++        self.assertEqual(functionality.method, "my_method")
++
++
++class TestHookPackageConfig(TestCase):
++    def setUp(self) -> None:
++        self._config = deepcopy(TEST_HOOK_PACKAGE_CONFIG)
++
++    def test_valid_config(self):
++        package_path_mock = MagicMock(name="package_path_mock")
++        config_loc_mock = MagicMock(name="config_loc_mock")
++        config_loc_mock.is_file.return_value = True
++        config_loc_mock.open = mock_open(read_data=json.dumps(self._config))
++        package_path_mock.__truediv__.return_value = config_loc_mock
++
++        hook_config = HookPackageConfig(package_path_mock)
++        self.assertEqual(hook_config.package_id, self._config["hook_package_id"])
++        self.assertEqual(hook_config.use_case, self._config["hook_use_case"])
++        self.assertEqual(hook_config.version, self._config["version"])
++        self.assertEqual(hook_config.specification, self._config["hook_specification"])
++        self.assertEqual(hook_config.description, self._config["description"])
++
++        self.assertIn("prepare", hook_config.functionalities)
++        self.assertIsInstance(hook_config.functionalities["prepare"], HookFunctionality)
++
++    def test_invalid_config(self):
++        invalid_config = deepcopy(self._config)
++        invalid_config["version"] = "1.x.y"
++
++        package_path_mock = MagicMock(name="package_path_mock")
++        config_loc_mock = MagicMock(name="config_loc_mock")
++        config_loc_mock.is_file.return_value = True
++        config_loc_mock.open = mock_open(read_data=json.dumps(invalid_config))
++        package_path_mock.__truediv__.return_value = config_loc_mock
++
++        with self.assertRaises(InvalidHookPackageConfigException) as e:
++            HookPackageConfig(package_path_mock)
++
++        self.assertTrue(e.exception.message.startswith("Invalid Config.json - "))
++
++    def test_missing_both_entry_method(self):
++        config_dict = {
++            "hook_package_id": "my_test_hook_package_id",
++            "hook_use_case": "IaC",
++            "description": "testing",
++            "version": "1.0.0",
++            "hook_specification": "1.0.0",
++            "functionalities": {"prepare": {}},
++        }
++
++        package_path_mock = MagicMock(name="package_path_mock")
++        config_loc_mock = MagicMock(name="config_loc_mock")
++        config_loc_mock.is_file.return_value = True
++        config_loc_mock.open = mock_open(read_data=json.dumps(config_dict))
++        package_path_mock.__truediv__.return_value = config_loc_mock
++
++        with self.assertRaises(InvalidHookPackageConfigException) as e:
++            HookPackageConfig(package_path_mock)
++
++        self.assertTrue(e.exception.message.startswith("Invalid Config.json - 'entry_method' is a required property"))
++
++    def test_non_existent_config(self):
++        package_path_mock = MagicMock(name="package_path_mock")
++        config_loc_mock = MagicMock(name="config_loc_mock")
++        config_loc_mock.is_file.return_value = False
++        config_loc_mock.__str__.return_value = "fake_path/Config.json"
++        package_path_mock.__truediv__.return_value = config_loc_mock
++
++        with self.assertRaises(InvalidHookPackageConfigException) as e:
++            HookPackageConfig(package_path_mock)
++
++        self.assertEqual(e.exception.message, "fake_path/Config.json is not a file or does not exist")
+diff --git a/tests/unit/lib/hook/test_hook_wrapper.py b/tests/unit/lib/hook/test_hook_wrapper.py
+new file mode 100644
+index 0000000000..c18b16ac7c
+--- /dev/null
++++ b/tests/unit/lib/hook/test_hook_wrapper.py
+@@ -0,0 +1,275 @@
++"""Test Hook Warpper"""
++from asyncio import subprocess
++import json
++from copy import deepcopy
++from pathlib import Path
++from sys import stderr, stdin
++from unittest import TestCase
++from unittest.mock import patch, MagicMock, mock_open, Mock
++
++from samcli.lib.hook.hook_wrapper import IacHookWrapper, _execute_as_module
++from samcli.lib.hook.exceptions import (
++    InvalidHookWrapperException,
++    InvalidHookPackageConfigException,
++    HookPackageExecuteFunctionalityException,
++)
++
++TEST_HOOK_PACKAGE_CONFIG = {
++    "hook_package_id": "my_test_hook_package_id",
++    "hook_use_case": "IaC",
++    "description": "testing",
++    "version": "1.0.0",
++    "hook_specification": "1.0.0",
++    "functionalities": {
++        "prepare": {
++            "entry_script": "./prepare/main",
++            "parameters": [
++                {
++                    "long_name": "param1",
++                    "short_name": "p1",
++                    "description": "Parameter 1",
++                    "mandatory": True,
++                    "type": "array",
++                },
++                {
++                    "long_name": "param2",
++                    "short_name": "p2",
++                    "description": "Parameter 2",
++                    "mandatory": False,
++                    "type": "array",
++                },
++            ],
++        }
++    },
++}
++
++
++class TestIacHookWrapper(TestCase):
++    @patch("samcli.lib.hook.hook_wrapper.HookPackageConfig")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._INTERNAL_PACKAGES_ROOT")
++    def test_instantiate_success(self, _INTERNAL_PACKAGES_ROOT_MOCK, HookPackageConfigMock):
++        _INTERNAL_PACKAGES_ROOT_MOCK.iterdir.return_value = [
++            "hook_package_1",
++            "hook_package_2",
++            "hook_package_3",
++        ]
++        hook_package_1_config_mock = Mock()
++        hook_package_1_config_mock.package_id = "hook-package-1"
++        hook_package_2_config_mock = Mock()
++        hook_package_2_config_mock.package_id = "hook-package-2"
++        hook_package_3_config_mock = Mock()
++        hook_package_3_config_mock.package_id = "hook-package-3"
++
++        HookPackageConfigMock.side_effect = [
++            hook_package_1_config_mock,
++            hook_package_2_config_mock,
++            hook_package_3_config_mock,
++        ]
++
++        hook_package = IacHookWrapper("hook-package-3")
++        self.assertEqual(hook_package._config, hook_package_3_config_mock)
++
++    @patch("samcli.lib.hook.hook_wrapper.HookPackageConfig")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._INTERNAL_PACKAGES_ROOT")
++    def test_instantiate_package_not_found(self, _INTERNAL_PACKAGES_ROOT_MOCK, HookPackageConfigMock):
++        _INTERNAL_PACKAGES_ROOT_MOCK.iterdir.return_value = [
++            "hook_package_1",
++            "hook_package_2",
++            "hook_package_3",
++        ]
++        hook_package_1_config_mock = Mock()
++        hook_package_1_config_mock.package_id = "hook-package-1"
++        hook_package_2_config_mock = Mock()
++        hook_package_2_config_mock.package_id = "hook-package-2"
++        hook_package_3_config_mock = Mock()
++        hook_package_3_config_mock.package_id = "hook-package-3"
++
++        HookPackageConfigMock.side_effect = [
++            hook_package_1_config_mock,
++            hook_package_2_config_mock,
++            hook_package_3_config_mock,
++        ]
++
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            IacHookWrapper("hook-package-4")
++
++        self.assertEqual(e.exception.message, 'Cannot locate hook package with hook_package_id "hook-package-4"')
++
++    @patch("samcli.lib.hook.hook_wrapper.HookPackageConfig")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._INTERNAL_PACKAGES_ROOT")
++    def test_instantiate_success_with_invalid_package(self, _INTERNAL_PACKAGES_ROOT_MOCK, HookPackageConfigMock):
++        _INTERNAL_PACKAGES_ROOT_MOCK.iterdir.return_value = [
++            "hook_package_1",
++            "hook_package_2",
++            "hook_package_3",
++        ]
++        hook_package_1_config_mock = Mock()
++        hook_package_1_config_mock.package_id = "hook-package-1"
++        hook_package_3_config_mock = Mock()
++        hook_package_3_config_mock.package_id = "hook-package-3"
++
++        HookPackageConfigMock.side_effect = [
++            hook_package_1_config_mock,
++            InvalidHookPackageConfigException("Invalid config"),
++            hook_package_3_config_mock,
++        ]
++
++        hook_package = IacHookWrapper("hook-package-3")
++        self.assertEqual(hook_package._config, hook_package_3_config_mock)
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    def test_execute_functionality_not_exist(self, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        hook_wrapper._config = Mock()
++        hook_wrapper._config.package_dir = Path("/my/path")
++        hook_wrapper._config.functionalities = {
++            "prepare": Mock(),
++        }
++
++        with self.assertRaises(HookPackageExecuteFunctionalityException) as e:
++            hook_wrapper._execute("other_key")
++
++        self.assertEqual(e.exception.message, 'Functionality "other_key" is not defined in the hook package')
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    @patch("samcli.lib.hook.hook_wrapper._execute_as_module")
++    def test_execute_success(self, execute_as_module_mock, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        hook_wrapper._config = Mock()
++        hook_wrapper._config.package_dir = Path("/my/path")
++        prepare_mock = Mock()
++        prepare_mock.module = "x.y.z"
++        prepare_mock.method = "my_method"
++        hook_wrapper._config.functionalities = {
++            "prepare": prepare_mock,
++        }
++        execute_as_module_mock.return_value = {"foo": "bar"}
++
++        output = hook_wrapper._execute("prepare")
++        self.assertEqual(output, {"foo": "bar"})
++        execute_as_module_mock.assert_called_once_with("x.y.z", "my_method", None)
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    def test_execute_with_none_config(self, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        hook_wrapper._config = None
++
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            hook_wrapper._execute("prepare")
++
++        self.assertEqual(e.exception.message, "Config is missing. You must instantiate a hook with a valid config")
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    @patch("samcli.lib.hook.hook_wrapper._execute_as_module")
++    def test_execute_with_missing_entry_method(self, execute_as_module_mock, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        hook_wrapper._config = Mock()
++        hook_wrapper._config.package_dir = Path("/my/path")
++        prepare_mock = Mock()
++        prepare_mock.entry_method = None
++        hook_wrapper._config.functionalities = {
++            "prepare": prepare_mock,
++        }
++
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            hook_wrapper._execute("prepare")
++
++        self.assertEqual(e.exception.message, 'Functionality "prepare" is missing an "entry_method"')
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._execute")
++    def test_prepare_with_no_defaults(self, execute_mock, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        execute_mock.return_value = {
++            "Header": {},
++            "IACApplications": {
++                "MainApplication": {
++                    "Metadata": "path/to/metadata",
++                },
++            },
++        }
++        actual = hook_wrapper.prepare(
++            "path/to/output_dir", "path/to/iac_project", True, "path/to/logs", "my_profile", "us-east-1"
++        )
++        execute_mock.assert_called_once_with(
++            "prepare",
++            {
++                "IACProjectPath": "path/to/iac_project",
++                "OutputDirPath": "path/to/output_dir",
++                "Debug": True,
++                "LogsPath": "path/to/logs",
++                "Profile": "my_profile",
++                "Region": "us-east-1",
++            },
++        )
++        self.assertEqual(actual, "path/to/metadata")
++
++    @patch("samcli.lib.hook.hook_wrapper.Path.cwd")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._execute")
++    def test_prepare_with_defaults(self, execute_mock, load_hook_package_mock, cwd_mock):
++        cwd_mock.return_value = "path/to/cwd"
++        hook_wrapper = IacHookWrapper("test_id")
++        execute_mock.return_value = {
++            "Header": {},
++            "IACApplications": {
++                "MainApplication": {
++                    "Metadata": "path/to/metadata",
++                },
++            },
++        }
++        actual = hook_wrapper.prepare("path/to/output_dir")
++        execute_mock.assert_called_once_with(
++            "prepare",
++            {
++                "IACProjectPath": "path/to/cwd",
++                "OutputDirPath": "path/to/output_dir",
++                "Debug": False,
++            },
++        )
++        self.assertEqual(actual, "path/to/metadata")
++
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._load_hook_package")
++    @patch("samcli.lib.hook.hook_wrapper.IacHookWrapper._execute")
++    def test_prepare_fail(self, execute_mock, load_hook_package_mock):
++        hook_wrapper = IacHookWrapper("test_id")
++        execute_mock.return_value = {
++            "Header": {},
++        }
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            hook_wrapper.prepare("path/to/iac_project", "path/to/output_dir", True, "path/to/log_file")
++
++        self.assertEqual(e.exception.message, "Metadata file path not found in the prepare hook output")
++
++
++class TestExecuteAsModule(TestCase):
++    @patch("samcli.lib.hook.hook_wrapper.importlib.import_module")
++    def test_happy_path(self, import_module_mock):
++        def my_method(params):
++            params["foo"] = "bar"
++            return params
++
++        module_mock = Mock()
++        method_mock = Mock()
++        method_mock.side_effect = my_method
++        module_mock.my_method = method_mock
++        import_module_mock.return_value = module_mock
++
++        actual = _execute_as_module("my_module", "my_method", {"param1": "value1"})
++        self.assertEqual(actual, {"foo": "bar", "param1": "value1"})
++
++    def test_import_error(self):
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            _execute_as_module("x.y.z", "my_method")
++
++        self.assertEqual(e.exception.message, 'Import error - HookFunctionality module "x.y.z"')
++
++    @patch("samcli.lib.hook.hook_wrapper.importlib.import_module")
++    @patch("samcli.lib.hook.hook_wrapper.hasattr")
++    def test_no_such_method(self, hasattr_mock, import_module_mock):
++        hasattr_mock.return_value = False
++
++        with self.assertRaises(InvalidHookWrapperException) as e:
++            _execute_as_module("x.y.z", "my_method")
++
++        self.assertEqual(e.exception.message, 'HookFunctionality module "x.y.z" has no method "my_method"')

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "zillow",
+  "displayName": "Zillow",
+  "description": "Search real estate listings, get Zestimates, analyze market trends, calculate mortgages, and evaluate investment properties.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

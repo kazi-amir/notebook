@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "city",
+  "displayName": "City",
+  "description": "Look up crime rate data by zip code.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

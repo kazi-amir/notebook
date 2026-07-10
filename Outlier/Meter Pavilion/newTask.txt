@@ -1,0 +1,111 @@
+**New Task**
+
+Your Task Type Single-turn
+Your Domain is Time
+Your Difficulty is Single App
+Your Category is Long-Horizon
+Universe john_choi
+Persona 
+
+# Long-Horizon Tasks
+Long-horizon tasks are interactions that take place over extended conversations (typically 40–50 turns) where the agent must demonstrate deep historical recall and maintain temporal context throughout. The defining characteristic is that the agent needs to correctly retrieve and apply details mentioned much earlier in the conversation, without being explicitly reminded. For example, the agent should be able to identify a person, topic, or constraint introduced hours (or many turns) ago when prompted with something like "Now, send that file to the person we discussed this morning." These tasks can occur in any Universe (Stride, Meriton, Long Horizon, etc.) and are specifically designed to stress-test the model's ability to track context across a prolonged dialogue.
+
+
+# Available skills for this task:
+```
+* amazon
+* amazon-fresh
+* buildium
+* calendar
+* contacts
+* eight-sleep
+* email
+* fintrack
+* fitbit
+* freshdirect
+* garmin-connect
+* health-guardian
+* hotel-management
+* instacart
+* logistics-tracking
+* myfitnesspal
+* obsidian
+* property-manager
+* renpho
+* shopify
+* sonos
+* strava
+* stride-support
+* stripe
+* target-store
+* ticketmaster
+* walmart
+* whoop
+* zendesk
+* zillow
+```
+
+Create a high quality, raw and natural, short and concise prompt strictly following the guidelines. Do not Hallucinate.
+
+# Evaluate the prompt as following:
+```
+1. Realistic*
+The prompt reads like a real user request someone would plausibly give to an AI agent. The wording, asks, and level of specificity feel natural rather than contrived or game-like.
+Examples of unrealistic prompts:
+Unnatural Wording: Utilize chain-of-thought reasoning to output my last five debit transactions in a JSON string with a temperature of 0.1.
+Unrelated Asks: Find me the price of the Gel-Kayano 31 running shoes, then write a Python script to calculate the area of a circle, and tell me if it’s going to rain in Seattle tomorrow.
+Overly Contrived: Analyze this list of 50 mortgage applicants. For every third applicant, take the first letter of their employer's name and create an acronym.
+✓ Confirmed
+✗ Does not meet requirement
+
+2. Answerability*
+The prompt must be answerable by an agent with full access to the default set of OpenClaw tools/skills and any additional tools in mock app environments. The task is sufficiently clear that the agent can immediately proceed without having to ask follow-up questions or guessing. For browsing tasks, needed information is not gated behind a paywall, login, or account creation unless the model has explicit login info for that website.
+✓ Confirmed
+✗ Does not meet requirement
+
+3. Verifiable Success*
+It must be possible to objectively judge whether the agent took a correct approach to the prompt. There does not need to be a single correct answer, but there should be a correct way to approach the task (e.g. a set of expected tool calls or skills used; not excessively open-ended) so that we can evaluate the model attempt as pass/fail.
+✓ Confirmed
+✗ Does not meet requirement
+
+4. Tool Use*
+The prompt requires browsing, retrieval, or other tool use beyond what a model could answer from static knowledge alone. At least 1 tool call is required to correctly answer the prompt.
+✓ Confirmed
+✗ Does not meet requirement
+
+6. Complexity Level*
+Select the complexity level that applies:
+• 1 app: Only requires the model to use a single app or browse a single website
+• 2 apps: Requires the model to use 2 apps or browse 2 websites
+• Many apps: Requires orchestration across multiple domains (e.g., check health data, find travel options accordingly, notify contacts, schedule follow-ups). Tests long-range planning and multi-tool coordination.
+```
+
+# Determine task type:
+```
+task types*
+- home_and_organization
+- customer_service
+- research_and_analysis
+- creative_writing
+- technical_support
+- education_and_learning
+- health_and_wellness
+- finance_and_budgeting
+
+
+# task description*
+2-3 sentence explain high level what your task is about (not your prompt but rather task summary)
+```
+
+Prepare a very high quality Desired Outcome following the project instructions.
+An example of a Good Desired Outcome:
+```
+The final output must be a bulleted list explicitly naming these exact models and their details:
+
+Model 1: Stride TrailGuard Stability | Price: $145.00 | Features Verified: Trail, Overpronation Support
+Model 2: Stride TerraGrip Pro | Price: $160.00 | Features Verified: Trail, Overpronation Support
+The agent must use the inventory_query tool (stride-support folder) to find exactly two matches that meet the user's constraints: Size 8, trail-ready, stability-focused, and under $180.
+
+Per IDENTITY.md, the tone must be "Expert and Encouraging" as a Running Expert. The agent must apply context from MEMORY.md, which notes the user "prefers dark-colored gear," by specifically recommending the "Midnight Black" or "Slate" colorways for both models instead of the standard neon options.
+```
+

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "finance-engine",
+  "displayName": "Finance Engine",
+  "description": "Look up stock tickers, company quotes, price history, and sector leaders.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

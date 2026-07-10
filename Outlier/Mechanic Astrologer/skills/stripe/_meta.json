@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "stripe",
+  "displayName": "Stripe",
+  "description": "Manage customers, products, prices, invoices, payments, subscriptions, refunds, disputes, and payouts via the Stripe billing and payments platform.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "notion",
+  "displayName": "Notion",
+  "description": "Browse and manage Notion workspace data including pages, databases, users, blocks, and comments.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

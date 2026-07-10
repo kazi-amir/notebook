@@ -1,0 +1,82 @@
+Looking at this diff carefully, I can identify **two blocking issues**. Let me proceed with the full task.
+
+---
+
+## ✅ Prompt
+
+You are a senior software engineer reviewing a pull request diff in the `aws-sam-cli` repository. AWS SAM CLI is a command-line tool used to build, test, debug, and deploy serverless applications using AWS SAM. This PR introduces a hooks wrapper system that allows IaC tools (e.g., Terraform) to plug into the SAM CLI via a discoverable package config, a JSON schema, and a dynamic module execution mechanism.
+
+The goal of this PR is to implement `IacHookWrapper`, which discovers a hook package by its ID, validates its `Config.json` against a JSON schema, and executes functionalities (e.g., `prepare`) by dynamically importing and calling a Python module method. The `prepare` functionality is expected to return a dict containing the path to the generated IaC metadata file.
+
+A full unified diff is provided below as reference text. Review the diff as the sole source of code changes and return a detailed PR review with the following structure:
+
+1. Summary
+2. Blockers (for each blocker, include what is wrong, why it matters, how to fix it, and where it exists in the diff)
+3. Non-blocking suggestions
+4. Tests/Validation
+
+---
+
+## ✅ Golden Response
+
+### 1. Summary
+
+This PR introduces the hooks wrapper infrastructure: a `HookPackageConfig` class that parses and validates `Config.json` against a JSON schema, and an `IacHookWrapper` that discovers hook packages and dispatches the `prepare` functionality via dynamic module import. The overall architecture is sound, but there are two blocking correctness issues: the `entry_method` JSON schema definition omits `required` constraints on `module` and `method`, which allows a structurally incomplete config to pass validation and cause an unhandled `KeyError` at runtime; and `_execute_as_module` blindly casts its return value to `Dict` without runtime validation, causing an `AttributeError` if a hook method returns `None` instead of a dict.
+
+---
+
+### 2. Blockers
+
+**Blocker 1: `entry_method` JSON schema is missing `"required": ["module", "method"]`**
+
+- **What's wrong:** In `hook_config_schema.json`, the `entry_method` definition lists `module` and `method` as `properties` but does not declare them in a `"required"` array. This means a config with `"entry_method": {}` passes `jsonschema.validate()` successfully.
+- **Why it matters:** After validation, `HookPackageConfig.__init__` converts each functionality dict into a `HookFunctionality(func_dict["entry_method"])` NamedTuple. The properties `functionality.module` and `functionality.method` are implemented as `self.entry_method["module"]` and `self.entry_method["method"]`. If `entry_method` is an empty dict, both of these raise an unhandled `KeyError` rather than a clean `InvalidHookPackageConfigException` or `InvalidHookWrapperException`. The schema is the contract that is supposed to prevent malformed configs from reaching the execution path.
+- **Exact fix:** Add `"required": ["module", "method"]` to the `entry_method` definition in `hook_config_schema.json` so that any config missing either field is rejected at validation time with a proper `InvalidHookPackageConfigException`.
+- **Where:** `samcli/lib/hook/hook_config_schema.json`, the `"entry_method"` definition under `"$defs"`.
+
+---
+
+**Blocker 2: `_execute_as_module` does not validate that the hook method returns a `Dict`**
+
+- **What's wrong:** In `hook_wrapper.py`, `_execute_as_module` ends with `result = getattr(mod, method)(params)` followed by `return cast(Dict, result)`. In Python, `cast` is a static type hint only — it performs no runtime check or conversion. If the hook method returns `None` or any non-dict value, `result` is still `None` (or whatever the method returned).
+- **Why it matters:** The caller `_execute` returns this value directly to `prepare()`, which then calls `output.get("IACApplications", {})`. If `output` is `None`, this raises `AttributeError: 'NoneType' object has no attribute 'get'` — an unhandled exception with no meaningful error message. Users of the hook see a raw Python traceback instead of a clear `InvalidHookWrapperException`.
+- **Exact fix:** After `result = getattr(mod, method)(params)`, add a runtime check such as `if not isinstance(result, dict): raise InvalidHookWrapperException(...)` before returning, so that non-dict returns are caught immediately with an actionable error message.
+- **Where:** `samcli/lib/hook/hook_wrapper.py`, inside the `_execute_as_module` function, after calling `getattr(mod, method)(params)`.
+
+---
+
+### 3. Non-blocking suggestions
+
+- **Unused imports in `test_hook_wrapper.py`:** The file imports `from asyncio import subprocess` and `from sys import stderr, stdin`, none of which are used anywhere in the test file. These should be removed to keep the test module clean.
+- **`jsonschema` property re-reads from disk on every call:** The `jsonschema` property in `HookPackageConfig` opens and parses the schema JSON file each time it is accessed. Since it is called once during `__init__`, this is not a performance problem in practice, but using a class-level cached attribute (e.g., `@functools.cached_property` or a class variable loaded once) would be more robust and avoids unnecessary I/O if the property is ever called more than once.
+- **Missing newline at end of `hook_config_schema.json`:** The file ends without a trailing newline (`\ No newline at end of file`). Adding a trailing newline is a POSIX convention and avoids diff noise in future edits.
+
+---
+
+### 4. Tests/Validation
+
+- **Empty `entry_method` dict test:** Add a test case that provides a config where `"entry_method"` is present but empty (`{}`). Before the fix, `jsonschema.validate()` accepts it and a subsequent `KeyError` is raised when accessing `functionality.module`. After the fix, `InvalidHookPackageConfigException` is raised at validation time with a message containing `"'module' is a required property"`.
+- **Hook method returning `None` test:** Add a test for `_execute_as_module` where the mocked method returns `None`. Before the fix, calling `output.get(...)` in `prepare()` raises `AttributeError`. After the fix, `InvalidHookWrapperException` is raised with a clear message indicating the hook returned an invalid output type.
+- **Hook method returning a non-dict type test:** Similarly, test that `_execute_as_module` raises `InvalidHookWrapperException` when the hook method returns a non-dict value such as a string or integer.
+
+---
+
+## ✅ Rubrics
+
+| # | Criteria | Type | Weight |
+|---|----------|------|--------|
+| 1 | The response follows a structure with Summary, Blockers, Non-blocking Suggestions, and Tests/Validations sections. | Instruction Following | Mandatory (5) |
+| 2 | The response identifies that the `entry_method` definition in `samcli/lib/hook/hook_config_schema.json` is missing `"required": ["module", "method"]`, allowing a config with an empty `entry_method` object to pass schema validation. | Bug Discovery | Mandatory (5) |
+| 3 | The response identifies that passing a config with `"entry_method": {}` causes an unhandled `KeyError` when `functionality.module` or `functionality.method` is accessed in `samcli/lib/hook/hook_config.py`, rather than raising `InvalidHookPackageConfigException`. | Bug Discovery | Mandatory (5) |
+| 4 | The response suggests a fix for the missing `entry_method` required fields, for example adding `"required": ["module", "method"]` to the `entry_method` definition in `hook_config_schema.json` so that incomplete configs are rejected at validation time. | Bug Discovery | Mandatory (5) |
+| 5 | The response identifies that `cast(Dict, result)` in `_execute_as_module` in `samcli/lib/hook/hook_wrapper.py` is a no-op at runtime and does not validate that the hook method's return value is a dict. | Bug Discovery | Mandatory (5) |
+| 6 | The response identifies that if the hook method returns `None`, the call to `output.get("IACApplications", {})` in the `prepare` method of `samcli/lib/hook/hook_wrapper.py` raises an unhandled `AttributeError` instead of a meaningful `InvalidHookWrapperException`. | Bug Discovery | Mandatory (5) |
+| 7 | The response suggests a fix for the missing return-type validation in `_execute_as_module`, for example adding a runtime `isinstance` check after calling the hook method and raising `InvalidHookWrapperException` if the result is not a dict. | Bug Discovery | Mandatory (5) |
+| 8 | The response includes a non-blocking suggestion that `test_hook_wrapper.py` contains unused imports (`from asyncio import subprocess` and `from sys import stderr, stdin`) that should be removed. | Style and Tone | Important (3) |
+| 9 | The response includes a non-blocking suggestion that the `jsonschema` property in `HookPackageConfig` in `samcli/lib/hook/hook_config.py` re-reads and re-parses the schema JSON file from disk on every access, and recommends caching it at the class level to avoid repeated I/O. | Logic Reasoning | Important (3) |
+| 10 | The response includes a non-blocking suggestion that `samcli/lib/hook/hook_config_schema.json` is missing a trailing newline at the end of the file. | Style and Tone | Important (3) |
+| 11 | The response recommends a test that supplies a config with `"entry_method": {}` and verifies that `InvalidHookPackageConfigException` is raised (not `KeyError`) after the schema fix is applied. | Instruction Following | Important (3) |
+| 12 | The response recommends a test that mocks the hook method to return `None` and verifies that `InvalidHookWrapperException` is raised when `_execute_as_module` or `prepare` is called, after the return-type validation fix is applied. | Instruction Following | Important (3) |
+| 13 | The response recommends a test that mocks the hook method to return a non-dict type (such as a string or integer) and verifies that `InvalidHookWrapperException` is raised by `_execute_as_module`. | Instruction Following | Important (3) |
+| 14 | The response identifies where in the diff the `entry_method` schema issue exists, specifically the `"$defs"` section of `samcli/lib/hook/hook_config_schema.json`. | Bug Discovery | Mandatory (5) |
+| 15 | The response identifies where in the diff the missing return-type validation exists, specifically inside the `_execute_as_module` function in `samcli/lib/hook/hook_wrapper.py`. | Bug Discovery | Mandatory (5) |

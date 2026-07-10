@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "ticketmaster",
+  "displayName": "Ticketmaster",
+  "description": "Search events, browse venues and attractions, check ticket availability, manage cart, and purchase tickets across concerts, sports, theater, comedy, and family shows.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

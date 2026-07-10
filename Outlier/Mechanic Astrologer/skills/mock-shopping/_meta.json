@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "mock-shopping",
+  "displayName": "Mock Shopping",
+  "description": "Browse products, manage cart, apply discount codes, and place orders via the shopping platform.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,17 @@
+6a2ef85ace4e89cdf6eeb678 (Expired), X: https://x.com/frankdilo/status/2023699975407014372
+
+
+
+
+
+
+### Test 2: test_restock_order_contains_required_fields
+Status: Flawed
+What is wrong: The test hardcodes a specific filename (`restock_order_september.json`). 
+What should be done: Rewrite. Instead of asserting a hardcoded path, the test should search the workspace for the relevant JSON file (similar to the logic used in Test 1 to find the order file) or iterate through the available JSON files to check their contents. Once the correct file is dynamically located, the test can then safely assert that the array contains the required structural fields.
+
+### Test 3: test_cheapest_supplier_selected
+
+Status: Flawed
+What is wrong: This test makes a fatal assumption about the agent's internal architecture. It attempts to import and use a function from the agent's generated code (`from workspace.utils.supplier_selector import get_cheapest_supplier`). The prompt does not explicitly command the agent to build a file at this specific path or a function with this specific name.
+What should be done: Rewrite. The test must be self-contained. It should independently parse the `suppliers.csv` file using standard Python libraries within the test itself. The test script must contain its own logic to find the cheapest supplier for each item (ensuring it includes the tie-breaker logic for faster delivery time mentioned in the prompt).

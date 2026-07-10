@@ -1,0 +1,12 @@
+1. 69fcce7f4a74fb12dcfa2f7d
+2. 6a057e918c3d7b70d3e2f07f 
+3. 6a07f512b23a33b3e2077722 **
+4. 6a0ce57a80391edbbdefddbe
+5. 6a0df6ec759e457076cf98c4
+6. 6a137c1225cd0e37711211fe *
+
+
+
+
+
+Long-Horizon category tasks can not be completed. The model doesn't respond at all. "Compacting Context" forever.

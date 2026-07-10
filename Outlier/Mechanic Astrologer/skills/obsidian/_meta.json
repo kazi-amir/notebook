@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "obsidian",
+  "displayName": "Obsidian",
+  "description": "Work with Obsidian vaults. Search, read, create, edit, move, and delete notes. Explore tags, wikilinks, and backlinks.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

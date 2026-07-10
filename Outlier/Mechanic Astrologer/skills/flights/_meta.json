@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "flights",
+  "displayName": "Flights",
+  "description": "Search flights and look up airport codes.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

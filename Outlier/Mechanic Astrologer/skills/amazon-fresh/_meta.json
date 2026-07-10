@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "amazon-fresh",
+  "displayName": "Amazon Fresh",
+  "description": "Browse Amazon Fresh grocery products, view order history, track deliveries, and analyze spending patterns.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

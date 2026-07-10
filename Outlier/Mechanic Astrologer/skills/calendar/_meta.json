@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "calendar",
+  "displayName": "Calendar",
+  "description": "View, create, edit, search, and delete calendar events. Filter by date range, tag, or keyword. Manage schedules and reminders.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "reminder",
+  "displayName": "Reminder",
+  "description": "Add, view, and delete reminders with optional repetition. Check which reminders are currently due.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

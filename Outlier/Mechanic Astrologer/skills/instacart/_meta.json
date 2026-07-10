@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "instacart",
+  "displayName": "Instacart",
+  "description": "Browse grocery products, view order history, track deliveries, and analyze spending patterns.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

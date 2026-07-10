@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "email",
+  "displayName": "Email",
+  "description": "Read, send, reply, forward, search, and manage emails across inbox, sent, draft, and trash folders.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

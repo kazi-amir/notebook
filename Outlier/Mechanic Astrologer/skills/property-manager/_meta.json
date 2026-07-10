@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "property-manager",
+  "displayName": "Property Manager",
+  "description": "Orchestrate tenant workflows across Buildium, Stripe, email, contacts, and calendar. Handles rent collection, maintenance coordination, lease renewals, and tenant onboarding.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

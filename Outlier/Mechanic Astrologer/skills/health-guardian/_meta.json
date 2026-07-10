@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "health-guardian",
+  "displayName": "Health Guardian",
+  "description": "Proactive health monitoring using Apple Health data. Track heart rate, HRV, sleep, steps, workouts, VO2 Max, and body metrics. Detect patterns and anomalies.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

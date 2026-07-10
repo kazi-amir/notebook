@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "walmart",
+  "displayName": "Walmart",
+  "description": "Search products, view order history, analyze spending patterns, and browse Walmart departments and categories.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

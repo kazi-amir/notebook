@@ -1,0 +1,204 @@
+Here is the complete task package for the Code-Based (CB) Refactoring evaluation, adhering to the Hawkins Experiments specifications.
+
+### User-Facing Problem Description
+Currently, the `ComClassGenerator` in the codebase violates the separation of concerns by handling both the generation of COM class wrappers and the reporting of diagnostics (e.g., checking for missing `partial` modifiers or disabled unsafe code). This mixes code emission logic with diagnostic logic, complicating the generator's plumbing and relying on `DiagnosticOr<T>` wrappers. The diagnostic reporting responsibilities need to be extracted out of the `ComClassGenerator` and moved into a dedicated Roslyn `DiagnosticAnalyzer` to simplify the generator pipeline and improve maintainability.
+
+---
+
+### Docker File Upload
+*(Since I cannot upload physical files directly, please save the text below into a file named exactly `Dockerfile` with no extension, and upload it to the platform).*
+
+### Docker File Text
+```dockerfile
+###############################################
+# BASE IMAGE
+###############################################
+FROM ubuntu:22.04
+
+###############################################
+# WORKING DIRECTORY
+###############################################
+# DO NOT MODIFY THIS SECTION
+RUN mkdir /app
+WORKDIR /app
+
+###############################################
+# SYSTEM DEPENDENCIES
+###############################################
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git python3 python3-pip python3-setuptools python-is-python3 \
+    cmake clang llvm build-essential curl wget tar \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install .NET 8.0/9.0 SDK required for compiling dotnet/runtime
+RUN curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 9.0
+ENV PATH="/root/.dotnet:${PATH}"
+
+###############################################
+# REPOSITORY SETUP
+###############################################
+RUN git clone https://github.com/dotnet/runtime.git .
+# Pin to the specific parent commit of the PR
+RUN git checkout 85149f3fd8fb5e24afafc5fedbf075a719464624
+
+###############################################
+# PROJECT DEPENDENCIES AND CONFIGURATION
+###############################################
+# Pre-build the specific test project to cache dependencies
+RUN ./dotnet.sh build src/libraries/System.Runtime.InteropServices/tests/ComInterfaceGenerator.Unit.Tests/ComInterfaceGenerator.Unit.Tests.csproj -c Release
+
+###############################################
+# ENTRYPOINT
+###############################################
+# DO NOT MODIFY THIS SECTION
+ENTRYPOINT ["/bin/bash"]
+```
+
+---
+
+### Coding Language
+C#
+
+---
+
+### Prompt
+
+```markdown
+## Context
+The `ComClassGenerator` source generator in `System.Runtime.InteropServices` currently handles both the generation of COM class code and the reporting of related diagnostics (such as checking if `AllowUnsafeBlocks` is enabled or if the class has a `partial` modifier). This mixing of concerns makes the generator's plumbing overly complex and relies heavily on `DiagnosticOr<T>` helper extensions to split values and diagnostics during the incremental generation pipeline.
+
+## Problem Statement
+We need to refactor the COM class generation process to strictly adhere to the separation of concerns. Diagnostic reporting should be entirely extracted out of `ComClassGenerator` and moved into a dedicated Roslyn `DiagnosticAnalyzer`. The generator should be simplified to focus solely on code emission. 
+
+## Requirements
+1. Create a new diagnostic analyzer named `ComClassGeneratorDiagnosticsAnalyzer`.
+2. Move all diagnostic logic from `ComClassGenerator.cs` and `ComClassInfo.cs` into the new analyzer. This includes:
+   - `GeneratorDiagnostics.RequiresAllowUnsafeBlocks`
+   - `GeneratorDiagnostics.InvalidAttributedClassMissingPartialModifier`
+   - `GeneratorDiagnostics.ClassDoesNotImplementAnyGeneratedComInterface`
+3. Refactor `ComClassInfo` so that it returns a direct object (or null) instead of a `DiagnosticOr<T>`.
+4. Remove all obsolete `DiagnosticOr<T>` extension helpers (like `Split`, `FilterAndReportDiagnostics`, and `RegisterDiagnostics`) from the shared source generation utility files, as they are no longer needed.
+5. In the new analyzer, ensure that if an error diagnostic is already present on a class (e.g., missing `partial` modifier), a redundant warning (e.g., missing COM interface) is NOT stacked on top of it.
+6. Update the unit tests to validate the analyzer-reported diagnostics rather than generator-reported diagnostics.
+
+## Success Criteria
+[x] All diagnostics are now reported by `ComClassGeneratorDiagnosticsAnalyzer`.
+[x] `ComClassGenerator` plumbing is simplified and no longer uses `DiagnosticOr<T>` for the class info.
+[x] Warnings are suppressed if an error is already present on the same class.
+[x] All existing and updated unit tests pass.
+
+## Files to Modify
+`src/libraries/System.Runtime.InteropServices/gen/ComInterfaceGenerator/Analyzers/ComClassGeneratorDiagnosticsAnalyzer.cs` (Create this file)
+`src/libraries/System.Runtime.InteropServices/gen/ComInterfaceGenerator/ComClassGenerator.cs`
+`src/libraries/System.Runtime.InteropServices/gen/ComInterfaceGenerator/ComClassInfo.cs`
+`src/libraries/System.Runtime.InteropServices/gen/Microsoft.Interop.SourceGeneration/DiagnosticOr.cs`
+`src/libraries/System.Runtime.InteropServices/gen/Microsoft.Interop.SourceGeneration/IncrementalGeneratorInitializationContextExtensions.cs`
+`src/libraries/System.Runtime.InteropServices/tests/ComInterfaceGenerator.Unit.Tests/ComClassGeneratorDiagnostics.cs`
+`src/libraries/System.Runtime.InteropServices/tests/ComInterfaceGenerator.Unit.Tests/ComClassGeneratorOutputShape.cs`
+
+## Notes
+- Ensure the new analyzer targets `LanguageNames.CSharp` and supports concurrent execution.
+- You will need to change the `VerifyCS` setup in the test files to use your new analyzer instead of `EmptyDiagnosticAnalyzer`.
+```
+
+---
+
+### Task Type
+**Task Type:** Refactoring/Maintainability (R/M)
+**Subtype:** Organization (Breaking a monolithic file into modules/analyzers and restructuring code for better maintainability).
+
+---
+
+### Run Script (`run_script.sh`)
+```bash
+#!/bin/bash
+# run_script.sh
+set -e
+
+# Run the specific unit tests for ComInterfaceGenerator
+./dotnet.sh test src/libraries/System.Runtime.InteropServices/tests/ComInterfaceGenerator.Unit.Tests/ComInterfaceGenerator.Unit.Tests.csproj -c Release --logger "console;verbosity=detailed" > test_output.log 2>&1
+
+cat test_output.log
+```
+
+---
+
+### Parsing Script (`parsing.py`)
+```python
+import sys
+import json
+import re
+from typing import List, Dict
+
+def parse_test_output(stdout_content: str, stderr_content: str) -> List[Dict[str, str]]:
+    tests = []
+    # Match standard dotnet test detailed output for Passed/Failed tests
+    # Example: "Passed ComInterfaceGenerator.Unit.Tests.ComClassGeneratorDiagnostics.UnsafeCodeNotEnabledWarns"
+    pattern = re.compile(r"^\s*(Passed|Failed|Skipped)\s+(.+)$", re.MULTILINE)
+    
+    for match in pattern.finditer(stdout_content):
+        status_raw = match.group(1).upper()
+        test_name = match.group(2).strip()
+        
+        # Normalize status
+        if status_raw == "PASSED":
+            status = "PASSED"
+        elif status_raw == "FAILED":
+            status = "FAILED"
+        elif status_raw == "SKIPPED":
+            status = "SKIPPED"
+        else:
+            status = "ERROR"
+            
+        tests.append({
+            "name": test_name,
+            "status": status
+        })
+        
+    return tests
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: python3 parsing.py <stdout.txt> <stderr.txt> <results.json>")
+        sys.exit(1)
+
+    with open(sys.argv[1], 'r') as f:
+        stdout = f.read()
+    with open(sys.argv[2], 'r') as f:
+        stderr = f.read()
+
+    parsed_tests = parse_test_output(stdout, stderr)
+
+    with open(sys.argv[3], 'w') as f:
+        json.dump({"tests": parsed_tests}, f, indent=4)
+```
+
+---
+
+### Golden Patch (`golden.patch`)
+*(Save the exact diff provided in your prompt description as `golden.patch`. Due to length and to avoid markdown breaking, ensure you copy the raw diff snippet from `-Extract diagnostic reporting out of COM class generator` code block.)*
+
+---
+
+### Rubric (15 Criteria)
+
+1. **[5 - Mandatory]** The solution creates a new file `ComClassGeneratorDiagnosticsAnalyzer.cs` containing a class that inherits from `DiagnosticAnalyzer`.
+2. **[5 - Mandatory]** The analyzer is decorated with the `[DiagnosticAnalyzer(LanguageNames.CSharp)]` attribute.
+3. **[5 - Mandatory]** The analyzer overrides `SupportedDiagnostics` to include `RequiresAllowUnsafeBlocks`, `InvalidAttributedClassMissingPartialModifier`, and `ClassDoesNotImplementAnyGeneratedComInterface`.
+4. **[5 - Mandatory]** The analyzer implements logic to check if `AllowUnsafeBlocks` is enabled and reports a diagnostic error if it is not.
+5. **[5 - Mandatory]** The analyzer implements logic to verify the presence of the `partial` modifier on the class declaration and reports an error if it is missing.
+6. **[5 - Mandatory]** The analyzer implements logic to prevent reporting the `ClassDoesNotImplementAnyGeneratedComInterface` warning if a preceding error (unsafe blocks or missing partial) has already been flagged on the same class.
+7. **[3 - Important]** `ComClassGenerator.cs` is updated to remove `FilterAndReportDiagnostics` calls and no longer directly reports the interface/unsafe warnings.
+8. **[5 - Mandatory]** `ComClassInfo.From()` is refactored to return `ComClassInfo` directly (or null) instead of returning a `DiagnosticOr<ComClassInfo>`.
+9. **[3 - Important]** `ComClassInfo.From()` is updated to accept the `INamedTypeSymbol` for the `GeneratedComInterfaceAttribute` rather than relying strictly on string-based metadata name checks internally.
+10. **[3 - Important]** The `DiagnosticOrTHelperExtensions` class (which contained `Split` and `FilterAndReportDiagnostics`) is entirely deleted from `DiagnosticOr.cs`.
+11. **[3 - Important]** The `RegisterDiagnostics` extension methods are removed from `IncrementalGeneratorInitializationContextExtensions.cs`.
+12. **[5 - Mandatory]** In `ComClassGeneratorDiagnostics.cs`, the test verifier `VerifyCS` is updated to utilize the new `ComClassGeneratorDiagnosticsAnalyzer` instead of `EmptyDiagnosticAnalyzer`.
+13. **[3 - Important]** The test `UnsafeCodeNotEnabledWarns` is renamed/updated to `UnsafeCodeNotEnabledErrors` to reflect the diagnostic severity correctly.
+14. **[3 - Important]** A new test case is added to verify that `NoWarningIfErrorIsAlreadyPresent` works specifically for the Unsafe Code scenario.
+15. **[3 - Important]** A new test case is added to verify that `NoWarningIfErrorIsAlreadyPresent` works specifically for the missing partial modifier scenario.
+
+---
+
+Would you like me to help draft the `e2e.sh` execution commands, or do you need assistance configuring the local testing environment for this specific patch?

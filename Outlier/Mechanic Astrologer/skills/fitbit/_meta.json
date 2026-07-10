@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "fitbit",
+  "displayName": "Fitbit",
+  "description": "Query Fitbit health data including sleep, heart rate, activity, steps, calories, and body measurements.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

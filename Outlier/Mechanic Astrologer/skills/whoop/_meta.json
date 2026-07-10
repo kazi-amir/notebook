@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "whoop-health-analysis",
+  "displayName": "Whoop Health Analysis",
+  "description": "Access Whoop wearable health data and generate interactive charts for sleep, recovery, strain, HRV, and workouts.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

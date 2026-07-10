@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "system",
+  "displayName": "System",
+  "description": "Get current time and wait for notifications.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

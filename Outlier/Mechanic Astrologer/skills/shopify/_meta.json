@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "shopify",
+  "displayName": "Shopify",
+  "description": "Access Shopify e-commerce data — customers, orders, and products.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

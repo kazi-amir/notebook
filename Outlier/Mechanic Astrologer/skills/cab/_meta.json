@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "cab",
+  "displayName": "Cab",
+  "description": "Book rides, get quotations, and manage ride history via the cab service.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

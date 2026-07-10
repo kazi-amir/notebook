@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "garmin-connect",
+  "displayName": "Garmin Connect",
+  "description": "Access Garmin Connect health and fitness data including daily activity, sleep, heart rate, HRV, stress, body battery, SpO2, training readiness, and workouts.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

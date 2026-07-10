@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "freshdirect",
+  "displayName": "FreshDirect",
+  "description": "Browse FreshDirect grocery products, view order history, track deliveries, and analyze spending patterns.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

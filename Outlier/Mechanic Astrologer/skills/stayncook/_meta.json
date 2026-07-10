@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "stayncook",
+  "displayName": "StayNCook",
+  "description": "Search vacation rental listings and check availability.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

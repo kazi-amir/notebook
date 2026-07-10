@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "target",
+  "displayName": "Target",
+  "description": "Search products, view order history, analyze spending patterns, browse Target Circle deals, and explore departments and categories.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

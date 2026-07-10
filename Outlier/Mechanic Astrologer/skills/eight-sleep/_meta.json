@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "eight-sleep",
+  "displayName": "Eight Sleep Pod Analysis",
+  "description": "Access Eight Sleep Pod smart bed data for sleep analytics, temperature control, HRV, and alarm management.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

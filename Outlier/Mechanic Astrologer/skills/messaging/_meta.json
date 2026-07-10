@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "messaging",
+  "displayName": "Messaging",
+  "description": "Send and receive messages, manage conversations, search message history, and add participants. Use for any direct messaging or group chat operations.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

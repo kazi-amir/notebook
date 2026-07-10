@@ -1,0 +1,26 @@
+**Task Type:** single-turn
+**Domain:** customer_service
+[cite_start]**Task Description:** This task requires the agent to navigate the Stride Shoes Shopify database to resolve a customer identification query[cite: 3489, 4414]. [cite_start]The agent must locate a specific customer by email and analyze their purchase history to determine which of two specific product models was bought[cite: 3598, 4421].
+
+***
+
+**Prompt**
+Yo, I was just chatting with my buddy Dave (dave.miller@gmail.com) and he’s super stoked about some limited edition kicks he bought from us. I want to surprise him by sending over a small gift card or a discount code as a 'thank you' for being such a loyal customer, but I can't remember if he actually bought the 'Midnight Velocity' runners or the 'Arctic Peak' boots. Can you check his order history for me real quick on April 28, 2026, so I know which one he got?
+
+**The Hint (Human Plan)**
+1. [cite_start]**Read** the Stride Support `SKILL.md` to identify the correct tool for customer and order lookups[cite: 3831, 4473, 5653].
+2. [cite_start]**Execute** `shopify_data.py search-customers --email "dave.miller@gmail.com"` to retrieve his specific `customer_id`[cite: 3591, 6082].
+3. [cite_start]**Execute** `shopify_data.py list-orders --customer-id [ID_FROM_STEP_2]` to pull his full purchase history[cite: 6082, 6179].
+4. [cite_start]**Search** the returned order list for either "Midnight Velocity" or "Arctic Peak" line items[cite: 4416].
+5. [cite_start]**Present** the specific model found to the user[cite: 4491, 5661].
+
+**The Desired Outcome**
+
+**Bucket 1: **
+[cite_start]The agent must identify the following exact data: Dave Miller (ID: 99283) placed an order on March 14, 2026, for the 'Midnight Velocity' runners (SKU: STR-MV-2026)[cite: 4685, 4788, 4812]. [cite_start]The 'Arctic Peak' boots do not appear in his history[cite: 4685].
+
+**Bucket 2: **
+[cite_start]The agent must use the shopify skill to retrieve customer details and order records, specifically invoking the read and exec tools[cite: 4701, 4795, 4814].
+
+**Bucket 3: **
+[cite_start]The agent must follow the helpful and efficient internal support persona from IDENTITY.md and tailor the model response by providing a direct answer without unnecessary formality[cite: 4713, 4799, 4817]. [cite_start]The workspace must be updated with N/A[cite: 4787, 4818].

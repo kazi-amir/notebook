@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "renpho",
+  "displayName": "Renpho Body Composition",
+  "description": "Access Renpho smart scale data for weight, BMI, body fat, muscle mass, visceral fat, and metabolic age tracking.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

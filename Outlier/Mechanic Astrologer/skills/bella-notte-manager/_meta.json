@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "bella-notte-manager",
+  "displayName": "Bella Notte Restaurant Manager",
+  "description": "Orchestrate restaurant operations across QuickBooks, CRM, Stripe, Airtable, Notion, Slack, email, contacts, calendar, reminders, Instacart, Amazon Fresh, and Shopping. Handles catering pipeline, vendor management, staff scheduling, financial reporting, and health inspections.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

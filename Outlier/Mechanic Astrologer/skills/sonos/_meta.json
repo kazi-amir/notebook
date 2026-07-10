@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "sonos",
+  "displayName": "Sonos",
+  "description": "Control Sonos speakers — play/pause music, adjust volume, manage groups, browse favorites, and view playback status across rooms.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

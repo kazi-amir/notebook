@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "fintrack",
+  "displayName": "FinTrack",
+  "description": "Manage users, bank accounts, transactions, and subscriptions for a personal finance tracking system.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

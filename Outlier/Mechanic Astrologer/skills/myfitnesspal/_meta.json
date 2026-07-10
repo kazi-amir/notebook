@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "myfitnesspal",
+  "displayName": "MyFitnessPal",
+  "description": "Access MyFitnessPal nutrition tracking data including daily food logs, meal breakdowns, macro/micronutrients, exercise logs, water intake, and nutrition goal tracking.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}

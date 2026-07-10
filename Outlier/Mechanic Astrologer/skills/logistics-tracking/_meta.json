@@ -1,0 +1,9 @@
+{
+  "owner": "agent-environment",
+  "slug": "logistics-tracking",
+  "displayName": "Logistics Tracking",
+  "description": "Track packages across carriers -- view shipment status, delivery timeline, and carrier details.",
+  "latest": {
+    "version": "1.0.0"
+  }
+}
