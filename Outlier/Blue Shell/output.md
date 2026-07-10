@@ -81,4 +81,70 @@ Include one row for every original image. Create an `excluded_photos` folder and
 
 Make sure the report and CSV agree on all filenames, measurements, crew details, findings, and recommendations. In your final response, confirm the files created, identify the excluded images and why they were moved, state the main irrigation follow-up, and clarify who completed the visit.
 
-This version keeps all important requirements while sounding a little more like a real user request.
+
+
+
+## Revised prompt
+
+I need a defensible fieldwork record for the March 14, 2026 Turtle Bay Resort landscaping makeup visit using the attached media packet and the relevant email, calendar, CRM, and messaging records in the workspace.
+
+Reconcile the original schedule, later crew changes, who actually attended, the requested work, and whether the irrigation issue was fully repaired or still needed follow-up. Inspect every uploaded file, including both handwritten notes, and distinguish direct visit evidence from contextual, ambiguous, duplicate, and unrelated media. Do not treat a visually plausible image as proof of a specific location or condition unless the available evidence supports that conclusion.
+
+Create `turtle_bay_fieldwork_report.md` with the visit timeline, crew reconciliation, heliconia work, irrigation findings, extracted measurements, historical context, evidence limitations, and recommended follow-up.
+
+Also create `turtle_bay_photo_log.csv` with exactly these columns:
+
+```text
+filename,evidence_class,site_area,visible_evidence,linked_source,assessment,disposition,rationale
+```
+
+Include one row for every original file. Use one of these evidence classes for each row:
+
+```text
+direct_visit_evidence
+context_only
+ambiguous
+duplicate
+unrelated
+```
+
+Create an `excluded_photos` folder and move only duplicate and unrelated media there. Retain contextual and ambiguous files, but clearly describe their limitations.
+
+If the evidence indicates that the irrigation problem remained unresolved, also create `turtle_bay_follow_up.md` stating the issue, supporting evidence, recommended next action, and whether the previous action was temporary or permanent.
+
+Make sure all generated files agree on the crew, dates, measurements, image classifications, repair status, and recommendations. In your final response, confirm the created files, explain all excluded media, summarize the crew conclusion, and state whether additional irrigation work is required.
+
+
+
+
+
+## Why this is much harder
+
+The first version mainly required straightforward OCR and exact duplicate detection. This version adds:
+
+* conflicting handwritten and universe evidence;
+* original assignment versus actual attendance;
+* exact duplicate and visual near-duplicate detection;
+* plausible unrelated media;
+* ambiguous media that must be retained carefully;
+* direct evidence versus contextual evidence;
+* temporary repair versus completed repair;
+* a conditional third artifact;
+* consistency across three outputs.
+
+These are connected requirements, not random extra work. They still fit **Visual Learning → Lab/Fieldwork Documentation** and require meaningful multimodal reasoning.
+
+## Suggested rubric-weight structure
+
+Use heavier weights for the difficult core outcomes:
+
+* Crew and timeline reconciliation: **15**
+* Correct OCR and measurements across both notes: **15**
+* Image evidence classification: **20**
+* Duplicate, near-duplicate, and unrelated handling: **15**
+* Irrigation repair-status conclusion: **15**
+* Report and CSV accuracy: **10**
+* Conditional follow-up file: **5**
+* Cross-artifact consistency: **5**
+
+This makes genuine reasoning failures carry enough weight. It does not guarantee a 50% failure, but it creates a much stronger chance without making the task unfair or impossible. The project requires the initial trajectory to fail at least half of the final rubric weight through meaningful task failures, not artificial formatting traps. 
