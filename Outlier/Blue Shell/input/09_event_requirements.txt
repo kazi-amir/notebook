@@ -1,0 +1,14 @@
+F1 Watch Party Snack Purchase Requirements
+
+1. Search Michelle's universe to identify the event, the snack she planned to buy, the relevant store, and the dietary restriction.
+2. Audit all four candidate products using the uploaded packaging images and FDA references.
+3. Recommend exactly two products.
+4. The total listed cost must not exceed $18.00.
+5. At least one selected product must be explicitly labeled gluten-free on the visible package.
+6. Do not call a product confirmed gluten-free only because no obvious gluten ingredient is visible.
+7. Reject any product whose package clearly declares wheat.
+8. Report all clearly visible major allergens for every candidate.
+9. Separate declared “Contains” allergens from voluntary “May contain” or shared-facility warnings.
+10. Confirm whether each product's front, ingredients, and Nutrition Facts images appear to belong to the same product and package size.
+11. Flag missing, cropped, unreadable, or inconsistent packaging information.
+12. Explain how the final recommendation relates to Michelle's original snack plan.
