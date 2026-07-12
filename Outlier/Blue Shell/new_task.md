@@ -34,19 +34,19 @@ This is the task-specific environment. It shows the exact skills, tables, and ac
 Add these IDs to the Universe Explorer app so it pulls the information of the universe assigned to this task.
 
 Category	Assigned Value
-Environment ID	openclaw-lucia_gutierrez-multi-8o2gzp9r
-Service Universe Artifact ID	openclaw-lucia_gutierrez-universe-jl36qt2t
+Environment ID	openclaw-michelle_zhu-multi-xo80bd7t
+Service Universe Artifact ID	openclaw-michelle_zhu-universe-n38jihwz
 📋 Your Task Parameters (required)
 
 Please ensure your prompts align strictly with the following assigned specs:
 
 Category	Assigned Value
 Task Type	Single-turn
-Category	Visual Learning
-Category Description	Student, parent, or self-learner uses academic media (worksheets, lecture slides, lab photos, textbook pages) to understand or document content. Agent OCRs handwriting, interprets diagrams, and produces study artifacts (notes, lab reports, solution sets, study guides).
-Subcategory	Lab/Fieldwork Documentation
-Universe	lucia_gutierrez
-Multimodal input strong suggestion	upload image
+Category	Commerce & Product
+Category Description	Shopper, online seller, or brand owner working with product or marketplace imagery. Agent visually matches items across listings, audits listing/photo quality, or checks brand/packaging against competitors and compliance rules.
+Subcategory	Brand/Packaging Audit
+Universe	michelle_zhu
+Multimodal input strong suggestion	upload image, api image, PDF
 🚀 High-Level Task Workflow
 
 Realistic, grounded, and verifiable tasks lead to the strongest trajectories.
@@ -78,10 +78,3 @@ Important Rules:
 DO NOT claim an artifact until you are sure you will use it.
 Each artifact can only be used once across the team; once claimed, it will disappear from the library.
 You may combine these with external files, provided they comply with our legal regulations.
-
-Support: If you have questions or hit download issues, please reach out to the project team in the Outlier Community or the War Room.
-
-Questions ❓
-
-If you run into any issues or have questions about the annotation process, reach out to your QM on our Outlier Community channel or join our War Room.
-
