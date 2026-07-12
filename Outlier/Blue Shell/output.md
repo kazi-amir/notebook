@@ -86,3 +86,18 @@ Use the trail-mix photo only as a style reference. Then recommend exactly two pr
 Save the full review as `snack_packaging_audit.md` and the final two choices as `snack_purchase_plan.csv` using these columns:
 
 candidate,product_name,listed_price_usd,visible_gluten_free,declared_contains,voluntary_warning,package_size_match,trail_mix_similarity,selection_reason
+
+
+## Updated prompt
+
+I’m planning another F1 watch party and need help choosing two snacks from the four options I uploaded.
+
+Please check my connected records for the F1 watch-party details, my earlier trail-mix idea and the store I mentioned, and the gluten-free requirement from a previous event. These may be from different occasions, so keep them separate.
+
+Compare the four products using the package photos, product CSV, event requirements, and FDA guides. Check whether the package details match the CSV, what allergens are listed, whether the product clearly says gluten-free, and whether anything is missing, unclear, or inconsistent. Please keep “contains” and “may contain” warnings separate, and don’t assume a product is gluten-free just because wheat is not listed.
+
+Use the trail-mix photo only to see which option is most similar. Then choose exactly two snacks that are in stock locally, cost no more than $18 in total, do not declare wheat, and have matching package sizes. At least one of them must clearly be labeled gluten-free.
+
+Save the full audit as `snack_packaging_audit.md` and the final two choices as `snack_purchase_plan.csv` with these columns:
+
+candidate,product_name,listed_price_usd,visible_gluten_free,declared_contains,voluntary_warning,package_size_match,trail_mix_similarity,selection_reason
