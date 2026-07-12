@@ -70,3 +70,19 @@ Reject:
 
 * **A — SkinnyPop:** image shows 1 oz, but CSV says 4.4 oz.
 * **D — Chex Mix:** declares wheat and has a likely size mismatch.
+
+
+
+## Prompt
+
+I’m planning another F1 watch party and need help choosing two snacks from the four uploaded options.
+
+Please check my connected records for the F1 watch-party context, my earlier trail-mix plan, the store I planned to buy it from, and the gluten-free requirement I mentioned before. These may come from separate events, so don’t combine them.
+
+Review each product using the front and back photos, the product CSV, the event requirements file, and the FDA PDFs. Check package size, ingredients, allergens, gluten-free claims, and whether the photos match the CSV. Keep “Contains” allergens separate from “may contain” warnings, and don’t assume something is gluten-free just because wheat is not listed.
+
+Use the trail-mix photo only as a style reference. Then recommend exactly two products that are locally available, in stock, cost no more than $18 total, do not declare wheat, and have matching package sizes. At least one must clearly say gluten-free.
+
+Save the full review as `snack_packaging_audit.md` and the final two choices as `snack_purchase_plan.csv` using these columns:
+
+candidate,product_name,listed_price_usd,visible_gluten_free,declared_contains,voluntary_warning,package_size_match,trail_mix_similarity,selection_reason
