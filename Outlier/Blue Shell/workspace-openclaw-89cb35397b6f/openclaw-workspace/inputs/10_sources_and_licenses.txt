@@ -1,0 +1,14 @@
+Product images and product records:
+Open Food Facts
+https://world.openfoodfacts.org/
+
+Open Food Facts product images are provided under Creative Commons Attribution-ShareAlike.
+Open Food Facts database content is provided under the Open Database License.
+
+Regulatory references:
+U.S. Food and Drug Administration
+Food Labeling Guide
+Food Allergen Labeling Guidance
+
+The images are used only as evidence in a private multimodal evaluation task.
+No ownership of package designs or brand artwork is claimed.
