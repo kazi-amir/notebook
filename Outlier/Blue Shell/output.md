@@ -99,3 +99,49 @@ Compare the four products using the uploaded package photos, the product CSV, th
 Use the trail-mix photo only to see which option is most similar. Then choose exactly two snack packs that are in stock, cost no more than $18 total, do not declare wheat, and have matching package sizes. At least one must clearly say gluten-free.
 
 Save the full review as snack_packaging_audit.md and the final two choices as snack_purchase_plan.csv using these columns: candidate, product_name, listed_price_usd, visible_gluten_free, declared_contains, voluntary_warning, package_size_match, trail_mix_similarity, selection_reason.
+
+
+## New prompt - 9:39 AM
+
+
+Use this revised prompt:
+
+---
+
+I’m planning another F1 watch party and need help choosing two snacks from the four options I uploaded.
+
+Please check my connected records for the F1 watch-party details, my earlier trail-mix idea, the store mentioned in my messages, and the gluten-free requirement from a previous event. These may be from different occasions, so keep them separate.
+
+Compare the four products using the package photos, product CSV, event requirements, and FDA guides. Check whether the package details match the CSV, what allergens are listed, whether the product clearly says gluten-free, and whether anything is missing, unclear, or inconsistent. Keep “contains” and “may contain” warnings separate, and don’t assume a product is gluten-free just because wheat is not listed.
+
+**Also find how many people attended the watch party, including me. For every product, read the labeled serving size and servings per container, then calculate its listed cost per serving. If the serving count or package size cannot be verified from the images, mark the calculation as uncertain instead of guessing.**
+
+Use the trail-mix photo only to see which option is most similar. Choose exactly two snack packs that are in stock, cost no more than $18 total, do not declare wheat, and have matching package sizes. At least one must clearly say gluten-free.
+
+**Each selected pack must provide at least one serving for every person at the party, and the two packs together must provide at least three servings per person. Prefer the better-value pair when more than one combination qualifies.**
+
+Save the full review as `snack_packaging_audit.md` and the final choices as `snack_purchase_plan.csv` using these columns:
+
+candidate, product_name, listed_price_usd, servings_per_container, cost_per_serving_usd, visible_gluten_free, declared_contains, voluntary_warning, package_size_match, trail_mix_similarity, selection_reason
+
+---
+
+## Modified parts
+
+You only need to add or change these sections:
+
+### Added after the product-audit paragraph
+
+> Also find how many people attended the watch party, including me. For every product, read the labeled serving size and servings per container, then calculate its listed cost per serving. If the serving count or package size cannot be verified from the images, mark the calculation as uncertain instead of guessing.
+
+### Added to the selection rules
+
+> Each selected pack must provide at least one serving for every person at the party, and the two packs together must provide at least three servings per person. Prefer the better-value pair when more than one combination qualifies.
+
+### Added CSV columns
+
+Add these two fields after `listed_price_usd`:
+
+> servings_per_container, cost_per_serving_usd
+
+These changes add calendar retrieval, serving-count extraction, arithmetic, uncertainty handling, per-person planning, and value comparison without making the request sound artificial.
